@@ -7,8 +7,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid>
+        <Grid.Background>
+            <ImageBrush Stretch="Fill" ImageSource="Assets/bg.jpg"/>
+        </Grid.Background>
         <RelativePanel>
+            
             <ScrollViewer x:ConnectionId='1' Margin="30" Width="500" 
                           x:Name="MessageBox" VerticalScrollBarVisibility="Hidden" 
                           RelativePanel.AlignHorizontalCenterWithPanel="True">
@@ -17,17 +21,17 @@
                     <Slider x:ConnectionId='3' Width="400" Value="0"                                x:Name="slider"></Slider>
                     <Button x:ConnectionId='4' Content="点击上传图片"                      />
                     <RelativePanel>
-                        <TextBlock x:ConnectionId='10' Text="title" Margin="40,0" x:Name="title" FontSize="20"/>
+                        <TextBlock x:ConnectionId='10' Text="title" Margin="40,0" x:Name="title" FontSize="20" Foreground="#FFB4ABAB"/>
                         <TextBox x:ConnectionId='11' Width="300" RelativePanel.RightOf="title" x:Name="titleContent"></TextBox>
                     </RelativePanel>
                     <RelativePanel Margin="0,20">
-                        <TextBlock x:ConnectionId='8' Text="Description" Margin="5,0" x:Name="des" FontSize="20"/>
+                        <TextBlock x:ConnectionId='8' Text="Description" Margin="5,0" x:Name="des" FontSize="20" Foreground="#FFB4ABAB"/>
                         <TextBox x:ConnectionId='9' Width="300" Height="200" RelativePanel.RightOf="des" x:Name="desContent" AcceptsReturn="True" TextWrapping="Wrap" />
                     </RelativePanel>
                     <DatePicker x:ConnectionId='5' Width="300" Margin="111,10,0,0" x:Name="datepick"/>
                     <RelativePanel>
                         <Button x:ConnectionId='6' Content="create" Margin="100,10" x:Name="create"            />
-                        <Button x:ConnectionId='7' Content="cancel" RelativePanel.RightOf="create" Margin="100,10,0,0"                 />
+                        <Button x:ConnectionId='7' Content="cancel" RelativePanel.RightOf="create" Margin="100,10,0,0"                  x:Name="cancel"/>
                     </RelativePanel>
                 </StackPanel>
             </ScrollViewer>

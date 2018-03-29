@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -7,6 +10,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -15,46 +19,138 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-struct Item
+namespace Mylist.Item
 {
-    public string title;
-    public string description;
-    public DateTimeOffset date;
-    public ImageSource image;
-    public bool valid;
-    public double scale;
-};
+    public class Item : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+        public string title
+        {
+            get { return this.Title; }
+            set { this.Title = value; INotifyPropertyChanged("title"); }
+        }
+        private string Title;
+        public string description
+        {
+            get { return this.Description; }
+            set { this.Description = value; INotifyPropertyChanged("description"); }
+        }
+        private string Description;
+        public string id;
+        public DateTimeOffset date
+        {
+            get { return this.Date; }
+            set { this.Date = value; INotifyPropertyChanged("date"); }
+        }
+        private DateTimeOffset Date;
+        public ImageSource imgSrc
+        {
+            get { return this.ImgSrc; }
+            set { this.ImgSrc = value; INotifyPropertyChanged("imgSrc"); }
+        }
+        private ImageSource ImgSrc;
+        public Visibility linevisible { get { return this.lineVisible; }
+            set { this.lineVisible = value; INotifyPropertyChanged("linevisible"); } }
+        private Visibility lineVisible;
+        private bool? Ischecked;
+        public bool? ischecked
+        {
+            get { return this.Ischecked; }
+            set { this.Ischecked = value;INotifyPropertyChanged("ischecked"); }
+        }
+        public Item(string t, string des, DateTimeOffset date, ImageSource i)
+        {
+            this.title = t;
+            this.description = des;
+            this.Date = date;
+            this.ImgSrc = i;
+            this.id = Guid.NewGuid().ToString();
+            this.lineVisible = Visibility.Collapsed;
+            this.Ischecked = false;
+        }
+        public void INotifyPropertyChanged(string propertyName)
+        {
+            //Debug.WriteLine(propertyName);
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+}
 
-class ItemList
+namespace Mylist.ViewModel
 {
-    private Item[] List;
-    private int ItemNum;
-    public ItemList()
+    public class ViewModel
     {
-        List = new Item[200];
-        ItemNum = 0;
+        private ObservableCollection<Mylist.Item.Item> allitems = new ObservableCollection<Mylist.Item.Item>();
+        public ObservableCollection<Mylist.Item.Item> AllItems { get { return this.allitems; } }
+        public Item.Item NowPick;
+        public void AddNewItem(string title, string des, DateTimeOffset date, ImageSource i)
+        {
+            Mylist.Item.Item newItem = new Mylist.Item.Item(title, des, date, i);
+            allitems.Add(newItem);
+            NowPick = null;
+        }
+        public void SetLineVisibility(string id)
+        {
+            foreach (var i in allitems)
+            {
+                if (i.id == id)
+                {
+                    if (i.linevisible == Visibility.Visible)
+                    {
+                        i.linevisible = Visibility.Collapsed;
+                        i.ischecked = false;
+                    }
+
+                    else
+                    {
+                        i.linevisible = Visibility.Visible;
+                        i.ischecked = true;
+                    }
+                }
+            }
+        }
+        public void DeleteItem(Item.Item item)
+        {
+            allitems.Remove(item);
+        }
+        public void Update(Item.Item item)
+        {
+            foreach(var i in allitems)
+            {
+                if (i.id == item.id)
+                {
+                    i.title = item.title;
+                    i.description = item.description;
+                    i.date = item.date;
+                    i.imgSrc = item.imgSrc;
+                }
+                    
+            }
+        }
+        public Item.Item FindEleById(string id)
+        {
+            foreach(var i in allitems)
+            {
+                if (i.id == id)
+                    return i;
+            }
+            return null;
+        }
+        public void DeleteItems()
+        {
+            foreach(var i in allitems.ToList())
+            {
+                if (i == NowPick)
+                    continue;
+                else if (i.ischecked == true)
+                    allitems.Remove(i);
+            }
+        }
     }
-    public bool Add(Item newItem)
-    {
-        List[ItemNum] = newItem;
-        ItemNum++;
-        return true;
-    }
-    public Item FindItemByIndex(int index)
-    {
-        if (index >= ItemNum)
-            return new Item();
-        return List[index];
-    }
-    public int GetItemNum()
-    {
-        return ItemNum;
-    }
-    public void DeleteItem(int index)
-    {
-        List[index].valid = false;
-    }
-};
+}
 
 namespace Mylist
 {
@@ -107,8 +203,8 @@ namespace Mylist
                     // 当导航堆栈尚未还原时，导航到第一页，
                     // 并通过将所需信息作为导航参数传入来配置
                     // 参数
-                    ItemList newList = new ItemList();
-                    rootFrame.Navigate(typeof(MainPage), newList);
+                    Mylist.ViewModel.ViewModel viewModel = new ViewModel.ViewModel();
+                    rootFrame.Navigate(typeof(MainPage), viewModel);
                 }
                 // 确保当前窗口处于活动状态
                 Window.Current.Activate();

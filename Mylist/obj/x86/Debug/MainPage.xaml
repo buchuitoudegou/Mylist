@@ -1,38 +1,63 @@
-﻿<Page
+﻿<Page x:ConnectionId='1'
     x:Class="Mylist.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Mylist"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:md="using:Mylist.Item"
     mc:Ignorable="d">
 
-    <Grid x:ConnectionId='1' Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"                               >
+    <Grid>
+        <Grid.Background>
+            <ImageBrush Stretch="Fill" ImageSource="Assets/bg.jpg"/>
+        </Grid.Background>
         <RelativePanel>
-            <ScrollViewer x:ConnectionId='2' Margin="30" x:Name="list" Width="500" VerticalScrollBarVisibility="Hidden" 
-                          RelativePanel.AlignHorizontalCenterWithPanel="True">
-                <StackPanel x:ConnectionId='14' x:Name="container">
-                    
-                </StackPanel>
-            </ScrollViewer>
-            <ScrollViewer x:ConnectionId='3' Margin="30" RelativePanel.RightOf="list" Width="500" 
+            <ListView x:ConnectionId='2' Margin="30" x:Name="list" Width="500" RelativePanel.AlignHorizontalCenterWithPanel="True"
+                                                                                                              >
+                <ListView.ItemTemplate>
+                    <DataTemplate                     >
+                        <StackPanel x:ConnectionId='16' x:Name="container">
+                            <Canvas Height="40">
+                                <RelativePanel>
+                                    <CheckBox x:ConnectionId='20'                                                                                                             ></CheckBox>
+                                    <Image x:ConnectionId='21'                                            Width="50" Height="40" Margin="30,0,0,0" Visibility="{Binding Visibility,ElementName=hideimg,Mode=OneWay}"></Image>
+                                    <TextBlock x:ConnectionId='22'                                         Margin="{Binding Margin, ElementName=hideimg, Mode=OneWay}" FontSize="20" />
+                                </RelativePanel>
+                                <Line x:ConnectionId='17' X1="{Binding X1, ElementName=eline,Mode=OneWay}" Y1="20" X2="500" Y2="20" Stroke="Black"                                                    />
+                                <AppBarButton Icon="Setting" VerticalAlignment="Top" Margin="380,-7,0,0">
+                                    <AppBarButton.Flyout>
+                                        <MenuFlyout>
+                                            <MenuFlyoutItem x:ConnectionId='18' Text="Delete"                                                        />
+                                            <MenuFlyoutItem x:ConnectionId='19' Text="Edit"                                                     />
+                                        </MenuFlyout>
+                                    </AppBarButton.Flyout>
+                                </AppBarButton>
+                            </Canvas>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <StackPanel x:ConnectionId='3' Visibility="Collapsed" Margin="30,10,0,0" x:Name="hideimg"></StackPanel>
+            <Line x:ConnectionId='4' Visibility="Collapsed" X1="30" x:Name="eline"/>
+            <ScrollViewer x:ConnectionId='5' Margin="30" RelativePanel.RightOf="list" Width="500" 
                           x:Name="MessageBox" Visibility="Collapsed" VerticalScrollBarVisibility="Hidden">
                 <StackPanel>
-                    <Image x:ConnectionId='4' Width="300" Height="200" Source="/Assets/StoreLogo.png" x:Name="img"/>
-                    <Slider x:ConnectionId='5' Width="400" Value="0"                                x:Name="slider"></Slider>
-                    <Button x:ConnectionId='6' Content="点击上传图片"                      />
+                    <Image x:ConnectionId='6' Width="300" Height="200" Source="/Assets/StoreLogo.png" x:Name="img"/>
+                    <Slider x:ConnectionId='7' Width="400" Value="0"                                x:Name="slider"></Slider>
+                    <Button x:ConnectionId='8' Content="点击上传图片"                      />
                     <RelativePanel>
-                        <TextBlock x:ConnectionId='12' Text="title" Margin="40,0" x:Name="title" FontSize="20"/>
-                        <TextBox x:ConnectionId='13' Width="300" RelativePanel.RightOf="title" x:Name="titleContent"></TextBox>
+                        <TextBlock x:ConnectionId='14' Text="title" Margin="40,0" x:Name="title" FontSize="20" Foreground="#FFB4ABAB" />
+                        <TextBox x:ConnectionId='15' Width="300" RelativePanel.RightOf="title" x:Name="titleContent"></TextBox>
                     </RelativePanel>
                     <RelativePanel Margin="0,20">
-                        <TextBlock x:ConnectionId='10' Text="Description" Margin="5,0" x:Name="des" FontSize="20"/>
-                        <TextBox x:ConnectionId='11' Width="300" Height="200" RelativePanel.RightOf="des" x:Name="desContent" AcceptsReturn="True" TextWrapping="Wrap" />
+                        <TextBlock x:ConnectionId='12' Text="Description" Margin="5,0" x:Name="des" FontSize="20" Foreground="#FFB4ABAB"/>
+                        <TextBox x:ConnectionId='13' Width="300" Height="200" RelativePanel.RightOf="des" x:Name="desContent" AcceptsReturn="True" TextWrapping="Wrap" />
                     </RelativePanel>
-                    <DatePicker x:ConnectionId='7' Width="300" Margin="111,10,0,0" x:Name="datepick"/>
+                    <DatePicker x:ConnectionId='9' Width="300" Margin="111,10,0,0" x:Name="datepick"/>
                     <RelativePanel>
-                        <Button x:ConnectionId='8' Content="create" Margin="100,10" x:Name="create"            />
-                        <Button x:ConnectionId='9' Content="cancel" RelativePanel.RightOf="create" Margin="100,10,0,0"                  x:Name="cancel"/>
+                        <Button x:ConnectionId='10' Content="create" Margin="100,10" x:Name="create"            />
+                        <Button x:ConnectionId='11' Content="cancel" RelativePanel.RightOf="create" Margin="100,10,0,0"                  x:Name="cancel"/>
                     </RelativePanel>
                 </StackPanel>
             </ScrollViewer>
@@ -46,17 +71,37 @@
                     <VisualState.Setters>
                         <Setter Target="MessageBox.Visibility" Value="Visible"/>
                         <Setter Target="list.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="False"/>
+                        <Setter Target="hideimg.Visibility" Value="Visible"/>
+                        <Setter Target="hideimg.Margin" Value="90,10,0,0"/>
+                        <Setter Target="eline.X1" Value="80"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="600"></AdaptiveTrigger>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="hideimg.Visibility" Value="Visible"/>
+                        <Setter Target="hideimg.Margin" Value="90,10,0,0"/>
+                        <Setter Target="eline.X1" Value="80"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
     </Grid>
     <Page.BottomAppBar>
-        <CommandBar x:ConnectionId='15' x:Name="btmCmdBar">
-            <AppBarButton x:ConnectionId='16' Label="add" x:Name="AddButton"                 >
+        <CommandBar x:ConnectionId='23' x:Name="btmCmdBar">
+            <AppBarButton x:ConnectionId='24' Label="add" x:Name="AddButton"                 >
                 <AppBarButton.Icon>
                     <SymbolIcon Symbol="Add"/>
                 </AppBarButton.Icon>
+                
+            </AppBarButton>
+            <AppBarButton x:ConnectionId='25' Label="delete" x:Name="DeleteButton"                  >
+                <AppBarButton.Icon>
+                    <SymbolIcon Symbol="Delete"/>
+                </AppBarButton.Icon>
+
             </AppBarButton>
         </CommandBar>
     </Page.BottomAppBar>

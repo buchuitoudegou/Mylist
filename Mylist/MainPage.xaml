@@ -5,16 +5,41 @@
     xmlns:local="using:Mylist"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:md="using:Mylist.Item"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" SizeChanged="Grid_SizeChanged">
+    <Grid>
+        <Grid.Background>
+            <ImageBrush Stretch="Fill" ImageSource="Assets/bg.jpg"/>
+        </Grid.Background>
         <RelativePanel>
-            <ScrollViewer Margin="30" x:Name="list" Width="500" VerticalScrollBarVisibility="Hidden" 
-                          RelativePanel.AlignHorizontalCenterWithPanel="True">
-                <StackPanel x:Name="container">
-                    
-                </StackPanel>
-            </ScrollViewer>
+            <ListView Margin="30" x:Name="list" Width="500" RelativePanel.AlignHorizontalCenterWithPanel="True"
+                      ItemsSource="{x:Bind ItemViewModel.AllItems, Mode=OneWay}" SelectionChanged="ViewDetail">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="md:Item">
+                        <StackPanel x:Name="container">
+                            <Canvas Height="40">
+                                <RelativePanel>
+                                    <CheckBox Click="LineVisibility" Name="{x:Bind Path=id, Mode=OneWay}" IsChecked="{x:Bind Path=ischecked, Mode=OneWay}"></CheckBox>
+                                    <Image Source="{x:Bind Path=imgSrc, Mode=TwoWay}" Width="50" Height="40" Margin="30,0,0,0" Visibility="{Binding Visibility,ElementName=hideimg,Mode=OneWay}"></Image>
+                                    <TextBlock Text="{x:Bind Path=title, Mode=TwoWay}" Margin="{Binding Margin, ElementName=hideimg, Mode=OneWay}" FontSize="20" />
+                                </RelativePanel>
+                                <Line X1="{Binding X1, ElementName=eline,Mode=OneWay}" Y1="20" X2="500" Y2="20" Stroke="Black" Visibility="{x:Bind Path=linevisible, Mode=OneWay}"/>
+                                <AppBarButton Icon="Setting" VerticalAlignment="Top" Margin="380,-7,0,0">
+                                    <AppBarButton.Flyout>
+                                        <MenuFlyout>
+                                            <MenuFlyoutItem Text="Delete" Click="PickNDel" DataContext="{x:Bind id, Mode=OneWay}"/>
+                                            <MenuFlyoutItem Text="Edit"  Click="Pick" DataContext="{x:Bind id, Mode=OneWay}"/>
+                                        </MenuFlyout>
+                                    </AppBarButton.Flyout>
+                                </AppBarButton>
+                            </Canvas>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <StackPanel Visibility="Collapsed" Margin="30,10,0,0" x:Name="hideimg"></StackPanel>
+            <Line Visibility="Collapsed" X1="30" x:Name="eline"/>
             <ScrollViewer Margin="30" RelativePanel.RightOf="list" Width="500" 
                           x:Name="MessageBox" Visibility="Collapsed" VerticalScrollBarVisibility="Hidden">
                 <StackPanel>
@@ -22,11 +47,11 @@
                     <Slider Width="400" Value="0" ValueChanged="ImageSizeChange" x:Name="slider"></Slider>
                     <Button Content="点击上传图片" Click="uploadPicture"/>
                     <RelativePanel>
-                        <TextBlock Text="title" Margin="40,0" x:Name="title" FontSize="20"/>
+                        <TextBlock Text="title" Margin="40,0" x:Name="title" FontSize="20" Foreground="#FFB4ABAB" />
                         <TextBox Width="300" RelativePanel.RightOf="title" x:Name="titleContent"></TextBox>
                     </RelativePanel>
                     <RelativePanel Margin="0,20">
-                        <TextBlock Text="Description" Margin="5,0" x:Name="des" FontSize="20"/>
+                        <TextBlock Text="Description" Margin="5,0" x:Name="des" FontSize="20" Foreground="#FFB4ABAB"/>
                         <TextBox Width="300" Height="200" RelativePanel.RightOf="des" x:Name="desContent" AcceptsReturn="True" TextWrapping="Wrap" />
                     </RelativePanel>
                     <DatePicker Width="300" Margin="111,10,0,0" x:Name="datepick"/>
@@ -46,6 +71,19 @@
                     <VisualState.Setters>
                         <Setter Target="MessageBox.Visibility" Value="Visible"/>
                         <Setter Target="list.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="False"/>
+                        <Setter Target="hideimg.Visibility" Value="Visible"/>
+                        <Setter Target="hideimg.Margin" Value="90,10,0,0"/>
+                        <Setter Target="eline.X1" Value="80"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="600"></AdaptiveTrigger>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="hideimg.Visibility" Value="Visible"/>
+                        <Setter Target="hideimg.Margin" Value="90,10,0,0"/>
+                        <Setter Target="eline.X1" Value="80"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -57,6 +95,13 @@
                 <AppBarButton.Icon>
                     <SymbolIcon Symbol="Add"/>
                 </AppBarButton.Icon>
+                
+            </AppBarButton>
+            <AppBarButton Label="delete" x:Name="DeleteButton" Click="removeall">
+                <AppBarButton.Icon>
+                    <SymbolIcon Symbol="Delete"/>
+                </AppBarButton.Icon>
+
             </AppBarButton>
         </CommandBar>
     </Page.BottomAppBar>
